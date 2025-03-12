@@ -32,8 +32,10 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v2
+      with:
+        organization: your-organization-name  # Replace with your SonarCloud organization name
+        projectKey: your-project-key         # Replace with your SonarCloud project key
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
