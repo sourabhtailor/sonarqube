@@ -1,43 +1,46 @@
-name: SonarCloud Analysis
+name: SonarCloud
 
 on:
   push:
     branches:
-      - main  # or the branch you want to scan
+      - main
   pull_request:
     branches:
-      - main  # or the branch you want to scan
+      - main
 
 jobs:
   sonarcloud:
-    name: SonarCloud Scan
+    name: Analyze on SonarCloud
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      # Set up JDK (required for Java-based projects, adjust as needed for other languages)
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
         with:
-          java-version: '11'  # Use the appropriate version for your project
+          php-version: '7.4'  # You can change this to your PHP version
 
-      # Cache SonarCloud dependencies
-      - name: Cache SonarCloud dependencies
-        uses: actions/cache@v3
+      - name: Install dependencies
+        run: |
+          composer install
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar-${{ hashFiles('**/*.java') }}  # Adjust if not using Java
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
-      # Run SonarCloud analysis
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
+      - name: Set up SonarCloud
+        uses: sonarsource/sonarcloud-github-action@v1
         with:
-          organization: sourabhtailor  # Replace with your SonarCloud organization name
-          projectKey: sourabhtailor_sonarqube         # Replace with your SonarCloud project key
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          organization: ${{ secrets.SONAR_ORG }}  # Your SonarCloud organization key
+          token: ${{ secrets.SONAR_TOKEN }}  # SonarCloud token stored as a secret
+          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Your SonarCloud project key
 
-
+      - name: Run SonarCloud Analysis
+        run: |
+          sonar-scanner
