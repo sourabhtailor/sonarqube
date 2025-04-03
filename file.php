@@ -34,5 +34,3 @@ function measureDuplication($filePath) {
 // Example usage
 $filePath = 'your_php_file.php';  // Replace with the path to your PHP file
 measureDuplication($filePath);
-
-?>
