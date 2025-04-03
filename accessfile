@@ -1,0 +1,15 @@
+function calculateTotalPrice(cart) {
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price;
+    });
+    return total;
+}
+
+function calculateTotalDiscount(cart) {
+    let total = 0;
+    cart.forEach(item => {
+        total += item.discount;
+    });
+    return total;
+}
